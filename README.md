@@ -54,9 +54,48 @@
    - Тёмная и светлая тема, а также настройки кастомизации интерфейса.
 
 ```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+flowchart TD
+    A[Start] --> B[Sign Up/Log In]
+    B -->|Successful Authentication| C[Home Page]
+    C --> D{Choose Action}
+    
+    D -->|Direct Chat| E[Open Direct Chat]
+    D -->|Group Chat| F[Create/Open Group Chat]
+    D -->|Channel| G[Create/Open Channel]
+    D -->|Call| H[Make Audio Call]
+    D -->|Profile| I[Profile Settings]
+    D -->|Search| J[Search Messages or Contacts]
+    D -->|Administration| K[Admin Panel]
+
+    E --> L[Send Text Messages]
+    E --> M[Send Files]
+    E --> N[React to Messages]
+    E --> O[Send Voice Messages]
+    
+    F --> L
+    F --> M
+    F --> N
+    F --> O
+    
+    G --> L
+    G --> M
+    G --> N
+    G --> O
+
+    I --> P[Change Profile Picture]
+    I --> Q[Update Status]
+    I --> R[Privacy Settings]
+    
+    J --> S[Keyword Search]
+    J --> T[Search by Name/Phone/Username]
+
+    K --> U{System Management}
+    U -->|User Management| V[Block/Unblock Users]
+    U -->|Activity Monitoring| W[View Statistics]
+    U -->|Content Moderation| X[Remove Inappropriate Content]
+    U -->|Channel and Group Management| Y[Edit or Delete]
+    U -->|Access Control| Z[Set User Roles]
+
+    H --> AA[End Call]
+    C -->|Logout| A[End]
 ```
