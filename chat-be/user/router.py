@@ -14,10 +14,15 @@ from user.auth import (
 )
 from user.dependencies import get_current_user
 from user.models import User, Role
-from user.schemas import SUserAuth, SCurrentUser, SUserRegister, SPUserAuth, SUUser
+from user.schemas import SUserAuth, SCurrentUser, SUserRegister, SPUserAuth, SUUser, SUsername
 from fastapi import APIRouter, HTTPException, Response, Depends, UploadFile, Form
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+
+
+@router.get("/user")
+async def get_user(username_or_email: str):
+    return await User.find_one_or_none(User.email == username_or_email or User.username == username_or_email) is not None
 
 
 @router.post("/register")

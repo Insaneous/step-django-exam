@@ -26,6 +26,7 @@ class RolePermission(Base):
 
 
 class User(Base):
+    chats = relationship('Chat', secondary='chatusers', back_populates='users')
     email = Column(String(length=255), nullable=False, unique=True)
     username = Column(String(length=255), nullable=False, unique=True)
     name = Column(String(length=255), nullable=True)

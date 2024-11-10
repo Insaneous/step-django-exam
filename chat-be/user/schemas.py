@@ -74,4 +74,6 @@ class SUserRegister(BaseModel):
     username: str
     password: str
 
-
+class SUsername(BaseModel):
+    username: str
+    email: str

@@ -1,14 +1,21 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from chat.models import Chat, ChatUser, ChatType, Message
 from chat.schemas import SCMessage
 from repository.tools import get_list_data
 from user.dependencies import get_current_user
 from user.models import User
 from ws.router import manager
+from database import async_session_maker
+from sqlalchemy.orm import selectinload
 
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
+
+
+@router.get("/")
+async def get_chats(user = Depends(get_current_user)):
+    return await Chat.get_all(filter=Chat.users.any(User.id == user.id), includes=['users'])
 
 
 @router.get("/users")
@@ -17,16 +24,31 @@ async def get_users(search: str='', page: int = 1, limit: int = 15, user = Depen
         model=User,
         page=page,
         limit=limit,
-        filter=User.email.icontains(search) or User.username.icontains(search),
+        filter=or_(User.email.icontains(search), User.username.icontains(search)),
     )
     
     
 @router.post('/personal/{user_id}')
 async def start_chat(user_id: int, user = Depends(get_current_user)):
-    chat = await Chat.create(user_id=user_id, type=ChatType.PERSONAL, includes=['messages'])
-    await ChatUser.create(chat_id=chat.id, user_id=user.id)
-    await ChatUser.create(chat_id=chat.id, user_id=user_id)
-    return chat
+    async with async_session_maker() as session:
+        chat = Chat(type=ChatType.PERSONAL)
+        session.add(chat)
+        await session.flush()
+        
+        current_user = await session.merge(user)
+        other_user = await session.get(User, user_id)
+                
+        session.add_all([
+            ChatUser(chat_id=chat.id, user_id=current_user.id),
+            ChatUser(chat_id=chat.id, user_id=other_user.id)
+        ])
+        
+        await session.commit()  # Commit first to persist `Chat` and `ChatUser` relations.
+        
+        # Reload the chat with its users eagerly loaded to avoid lazy loading.
+        chat = await session.get(Chat, chat.id, options=[selectinload(Chat.users)])
+        
+        return chat
 
 
 @router.get('/messages/{chat_id}')
