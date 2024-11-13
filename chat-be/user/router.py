@@ -25,6 +25,11 @@ async def get_user(username_or_email: str):
     return await User.find_one_or_none(User.email == username_or_email or User.username == username_or_email) is not None
 
 
+@router.get("/users")
+async def get_users(user: User = Depends(get_current_user)) -> List[SUsername]:
+    return await User.get_all()
+
+
 @router.post("/register")
 async def register_user(user_data: SUserRegister, response: Response):
     existing_user = await User.find_one_or_none(User.email == user_data.email)

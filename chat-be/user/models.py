@@ -1,6 +1,7 @@
 from repository.base import Base
 from sqlalchemy import Column, String, DateTime, ForeignKey, JSON, func, Boolean, UniqueConstraint
 from sqlalchemy.orm import relationship
+from chat.models import ChatUser
 
 class Permission(Base):
     names = Column(JSON, nullable=False)

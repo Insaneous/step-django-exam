@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/slice/authSlice"; // Assuming this is where your action resides
 import { getCurrentUser } from "../../api/apiClient"; // Import your getCurrentUser function
 import { Outlet, useNavigate } from "react-router-dom";
-import { Header } from "../../components/Header";
-import { Footer } from "../../components/Footer";
 import styles from './style.module.css';
 
 export const RootTemplate = () => {
@@ -28,11 +26,11 @@ export const RootTemplate = () => {
         })
         .catch((error) => {
           console.error("Authentication failed", error);
-          navigate("/login"); // Redirect to login page if authentication fails
+          navigate("/auth"); // Redirect to login page if authentication fails
         });
     } else {
       setLoading(false); // No token, stop loading and navigate to login
-      navigate("/login");
+      navigate("/auth");
     }
   }, [dispatch, navigate, token]);
 
@@ -42,11 +40,7 @@ export const RootTemplate = () => {
 
   return (
     <main>
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
+      <Outlet />
     </main>
   );
 };

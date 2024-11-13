@@ -1,8 +1,11 @@
 import enum
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, String, Text, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, String, Text, desc, func, select
+from sqlalchemy.orm import relationship, aliased, selectinload
 from repository.base import Base
-from user.models import User
+from database import async_session_maker
+from typing import List, Optional
+from sqlalchemy.orm import joinedload
+
 
 class ChatType(enum.Enum):
     GROUP = 'group'
@@ -26,4 +29,29 @@ class Chat(Base):
     type = Column(Enum(ChatType, native_enum=True))
     name = Column(String(length=255), nullable=True)
     messages = relationship(Message, back_populates="chat")
-    users = relationship(User, secondary='chatusers', back_populates='chats')
+    users = relationship('User', secondary='chatusers', back_populates='chats')
+    
+    @classmethod
+    async def get_all(cls, user_id: int):
+        # Query to fetch chats with users and last message
+        query = (
+            select(cls)
+            .options(
+                selectinload(Chat.users),  # Preload chat users
+                selectinload(Chat.messages)  # Preload messages
+            )
+            .join(ChatUser, ChatUser.chat_id == cls.id)
+            .where(ChatUser.user_id == user_id)
+            .order_by(desc(cls.id))  # Optional: Adjust ordering as needed
+        )
+
+        async with async_session_maker() as session:
+            result = await session.execute(query)
+            chats = result.scalars().unique().all()
+            
+            # Attach last message data manually
+            for chat in chats:
+                chat.last_message = (
+                    max(chat.messages, key=lambda m: m.created_at) if chat.messages else None
+                )
+            return chats

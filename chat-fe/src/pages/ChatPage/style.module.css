@@ -1,0 +1,119 @@
+.chat {
+  display: flex;
+  background-color: black;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  width: 100%;
+}
+.chat__messages {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 1rem;
+}
+.chat__form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  input {
+    flex: 1;
+    border: none;
+    border-radius: 1rem;
+    background-color: #212121;
+    color: #fff;
+    height: 3.375rem;
+    outline: none;
+    padding: 1rem;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  button {
+    background-color: #8774E1;
+    color: #fff;
+    font-size: 1.5rem;
+    text-align: center;
+    border: none;
+    outline: none;
+    height: 3.375rem;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    padding: .5rem .5rem;
+    cursor: pointer;
+  }
+  .fileUploadWrapper {
+    height: 3.375rem;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    background-color: #212121;
+    color: #fff;
+    border-radius: 1rem;
+    cursor: pointer;
+  }
+  .fileUploadLabel {
+    height: 3.375rem;
+    cursor: pointer;
+    padding: 0.875rem 1rem;
+    display: inline-block;
+  }
+  .fileUploadLabel:hover {
+    background-color: #333333;
+  }
+  .fileNameDisplay {
+    text-align: center;
+    padding: .5rem;
+    background-color: #212121;
+    border-radius: 1rem;  
+    max-width: 15%;
+    height: 3.375rem;
+    overflow: hidden;
+    color: #fff;
+    font-size: 0.875rem;
+  }
+  .fileNameDisplay:hover {
+    background-color: #333333;
+  }
+}
+.chat__received {
+  display: flex;
+  justify-content: flex-start;
+  padding: .3rem 1rem;
+  border-radius: 1rem;
+  a {
+    all: unset;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+.chat__received p {
+  display: flex;
+  flex-direction: column;
+  background-color: #212121;
+  padding: .5rem 1rem;
+  border-radius: 1.5rem;
+  color: #fff;
+  font-size: 1rem;
+}
+.chat__sent {
+  display: flex;
+  justify-content: flex-end;
+  padding: .3rem 1rem;
+  border-radius: 1rem;
+  a {
+    all: unset;
+    color: #c5c5c5;
+    cursor: pointer;
+  }
+}
+.chat__sent p {
+  display: flex;
+  flex-direction: column;
+  background-color: #8774E1;
+  padding: .5rem 1rem;
+  border-radius: 1.5rem;
+  color: #fff;
+  font-size: 1rem;
+}

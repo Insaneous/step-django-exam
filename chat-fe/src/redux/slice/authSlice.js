@@ -33,6 +33,9 @@ export const authSlice = createSlice({
     token: localStorage.getItem('access_token') || null,
   },
   reducers: {
+    resetUserExists: (state) => {
+      state.userExists = null;
+    },
     setUser(state, action) {
       state.userExists = action.payload.userExists;
       state.user = action.payload.user;
@@ -48,18 +51,21 @@ export const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.token = action.payload.access_token;
+        localStorage.setItem('access_token', action.payload.access_token);
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.data;
         state.token = action.payload.access_token;
+        localStorage.setItem('access_token', action.payload.access_token);
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+        localStorage.removeItem('access_token');
       });
   },
 });
 
 // Export actions and reducer
-export const { setUser } = authSlice.actions; // Export only the action from reducers
+export const { setUser, resetUserExists } = authSlice.actions; // Export only the action from reducers
 export default authSlice.reducer;
