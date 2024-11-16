@@ -67,7 +67,6 @@ export const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Chats
       .addCase(fetchChats.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -80,8 +79,6 @@ export const chatSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload || 'Failed to fetch chats.';
       })
-
-      // Fetch Chat by ID
       .addCase(fetchChatById.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -94,8 +91,6 @@ export const chatSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload || 'Failed to fetch chat details.';
       })
-
-      // Send Message
       .addCase(sendMessage.pending, (state) => {
         state.status = 'loading';
       })

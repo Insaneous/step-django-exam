@@ -63,7 +63,6 @@ export const AuthPage = () => {
     loginForm.style.display = 'none';
     registerForm.style.display = 'none';
   
-    // Reset userExists state to null
     dispatch(resetUserExists());
   };  
 

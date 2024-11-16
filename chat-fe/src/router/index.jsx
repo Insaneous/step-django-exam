@@ -5,7 +5,6 @@ import { ChatPage } from '../pages/ChatPage';
 import { AuthPage } from '../pages/AuthPage';
 import { ChatTemplate } from '../templates/ChatTemplate';
 
-// Define the routes with protection
 export const router = createBrowserRouter([
   {
     path: '/',

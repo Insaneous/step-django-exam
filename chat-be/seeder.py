@@ -12,7 +12,7 @@ async def load_and_run_seeder_async(module_path):
 
 async def main():
     tasks = []
-    for root, dirs, files in os.walk('.'):  # Идем по всем директориям в текущей директории
+    for root, dirs, files in os.walk('.'):
         if 'seed.py' in files:
             path = os.path.join(root, 'seed.py')
             print(f"Running Seeder from {path}")

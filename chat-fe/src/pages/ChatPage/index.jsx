@@ -41,7 +41,7 @@ export const ChatPage = () => {
     setFileName("");
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
-      fileInput.value = ""; // Clear file input
+      fileInput.value = "";
     }
   };
 
@@ -61,7 +61,7 @@ export const ChatPage = () => {
     try {
       dispatch(sendMessage({ chatId: id, formData }));
       message.current.value = '';
-      clearSelectedFile(); // Clear the file after sending
+      clearSelectedFile();
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {

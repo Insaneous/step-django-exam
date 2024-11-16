@@ -14,59 +14,8 @@ from sqlalchemy.orm import selectinload
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 
-@router.post('/create-or-get')
-async def create_or_get_personal_chat(username: str = Body(...), user=Depends(get_current_user)):
-    async with async_session_maker() as session:
-        # Fetch the other user by username
-        other_user = await session.execute(select(User).where(User.username == username))
-        other_user = other_user.scalars().first()
-
-        if not other_user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        # Check if a personal chat already exists between the two users
-        existing_chat = await session.execute(
-            select(Chat)
-            .options(selectinload(Chat.users))
-            .filter(
-                Chat.type == ChatType.PERSONAL,
-                Chat.users.any(User.id == user.id),
-                Chat.users.any(User.id == other_user.id),
-            )
-        )
-        chat = existing_chat.scalars().first()
-
-        if chat:
-            return {
-                "id": chat.id,
-                "name": chat.name or other_user.username,
-                "type": chat.type,
-                "users": [user.username for user in chat.users]
-            }
-
-        # Create a new personal chat if it doesn't exist
-        new_chat = Chat(type=ChatType.PERSONAL)
-        session.add(new_chat)
-        await session.flush()
-
-        session.add_all([
-            ChatUser(chat_id=new_chat.id, user_id=user.id),
-            ChatUser(chat_id=new_chat.id, user_id=other_user.id),
-        ])
-
-        await session.commit()
-
-        return {
-            "id": new_chat.id,
-            "name": other_user.username,
-            "type": new_chat.type,
-            "users": [user.username, other_user.username],
-        }
-
-
 @router.get("/")
 async def get_chats(user=Depends(get_current_user)):
-    """Retrieve all chats for the current user."""
     try:
         chats = await Chat.get_all(user_id=user.id)
         return [
@@ -83,14 +32,14 @@ async def get_chats(user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post('/personal/{user_id}')
-async def start_chat(user_id: int, user=Depends(get_current_user)):
-    """Start a new personal chat between the current user and another user."""
+@router.post('/personal/{username}')
+async def start_chat(username: str, user=Depends(get_current_user)):
     async with async_session_maker() as session:
+        other_user = await session.get(User, username=username)
         existing_chat = await Chat.find_one(
             filter=and_(
                 Chat.type == ChatType.PERSONAL,
-                Chat.users.any(id=user_id),
+                Chat.users.any(id=other_user.id),
                 Chat.users.any(id=user.id)
             )
         )
@@ -102,7 +51,6 @@ async def start_chat(user_id: int, user=Depends(get_current_user)):
         await session.flush()
 
         current_user = await session.merge(user)
-        other_user = await session.get(User, user_id)
 
         session.add_all([
             ChatUser(chat_id=chat.id, user_id=current_user.id),
@@ -116,7 +64,6 @@ async def start_chat(user_id: int, user=Depends(get_current_user)):
 
 @router.get('/messages/{chat_id}')
 async def get_messages(chat_id: int, page: int = 1, limit: int = 15, user=Depends(get_current_user)):
-    """Retrieve a paginated list of messages for a specific chat."""
     return {"data": await Message.get_all(filter=Message.chat_id == chat_id),
     'id': chat_id
     }
@@ -165,7 +112,6 @@ async def get_message(message_id: int, user=Depends(get_current_user)):
 
 @router.post('/message/{chat_id}/edit')
 async def edit_message(chat_id: int, data: SCMessage, user=Depends(get_current_user)):
-    """Edit an existing message in a chat and broadcast the changes."""
     chat = await Chat.find_by_id_or_fail(model_id=chat_id)
     await ChatUser.find_one_or_fail(
         filter=and_(ChatUser.chat_id == chat.id, ChatUser.user_id == user.id)
@@ -179,10 +125,7 @@ async def edit_message(chat_id: int, data: SCMessage, user=Depends(get_current_u
     await message.save()
 
     await manager.broadcast(chat_id, {
-        "id": message.id,
-        "text": message.text,
-        "sender": message.user.username,
-        "timestamp": message.created_at.isoformat(),
+        "id": message.id
     })
 
     return await Chat.find_by_id(model_id=chat.id, includes=["messages"])

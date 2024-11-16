@@ -1,4 +1,3 @@
-// src/redux/slice/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginUser, registerUser, logoutUser, getUser } from '../../api/apiClient';
 
@@ -7,22 +6,19 @@ export const checkUser = createAsyncThunk('auth/getUser', async (emailOrUsername
   return response.data;
 });
 
-// Async thunk for login
 export const login = createAsyncThunk('auth/login', async (userData) => {
   const response = await loginUser(userData);
-  return response.data; // This is what will be available in payload
+  return response.data;
 });
 
-// Async thunk for register
 export const register = createAsyncThunk('auth/register', async (userData) => {
   const response = await registerUser(userData);
   return response.data;
 });
 
-// Async thunk for logout (this is only used for dispatching logout in redux state)
 export const logout = createAsyncThunk('auth/logout', async () => {
-  await logoutUser(); // We don't need to do anything after calling the API
-  return {}; // Clear the user data after logout
+  await logoutUser();
+  return {};
 });
 
 export const authSlice = createSlice({
@@ -41,7 +37,6 @@ export const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
     },
-    // Removed redundant logout definition here
   },
   extraReducers: (builder) => {
     builder
@@ -66,6 +61,5 @@ export const authSlice = createSlice({
   },
 });
 
-// Export actions and reducer
-export const { setUser, resetUserExists } = authSlice.actions; // Export only the action from reducers
+export const { setUser, resetUserExists } = authSlice.actions;
 export default authSlice.reducer;

@@ -51,7 +51,7 @@ export const getChats = () => apiClient.get('/chat');
 export const getChatById = (id) => apiClient.get(`/chat/messages/${id}`);
 
 export const createOrGetChat = (username) =>
-  apiClient.post('/chat/create-or-get', username);
+  apiClient.post(`/chat/personal/${username}`);
 
 export const getMessageById = (messageId) => apiClient.get(`/chat/message/${messageId}`);
 

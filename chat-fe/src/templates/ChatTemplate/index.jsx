@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchChats } from '../../redux/slice/chatSlice';
-import { fetchUsers } from '../../redux/slice/userSlice'; // Assume you have a userSlice
+import { fetchUsers } from '../../redux/slice/userSlice';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/slice/authSlice';
 import styles from './style.module.css';
@@ -15,11 +15,11 @@ export const ChatTemplate = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const chats = useSelector((state) => state.chat.chats);
-  const users = useSelector((state) => state.users.users); // From userSlice
+  const users = useSelector((state) => state.users.users);
   const currentUser = useSelector((state) => state.auth.user);
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('Chats'); // New state for tab selection
+  const [activeTab, setActiveTab] = useState('Chats');
 
   useEffect(() => {
     if (activeTab === 'Chats') {
@@ -37,9 +37,9 @@ export const ChatTemplate = () => {
   const handleUserClick = async (username) => {
     try {
       const response = await createOrGetChat(username);
-      const chatId = response.data.id; // Assuming the chat ID is returned
-      navigate(`/chat/${chatId}`); // Navigate to the chat
-      setActiveTab('Chats'); // Set the active tab to chats
+      const chatId = response.data.id;
+      navigate(`/chat/${chatId}`);
+      setActiveTab('Chats');
     } catch (error) {
       console.error('Error creating or fetching chat:', error);
     }
