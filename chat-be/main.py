@@ -10,6 +10,13 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",
     "http://localhost:8000",
+    "https://chat.ins.cx",
+    "https://chat.ins.cx:8000",
+    "https://chat.ins.cx:5173",
+    "https://chat.ins.cx:3000",
+    "http://chat.ins.cx:3000",
+    "http://chat.ins.cx:8000",
+    "http://chat.ins.cx:5173",
 ]
 
 app.add_middleware(
