@@ -18,6 +18,8 @@ origins = [
     "http://chat.ins.cx:3000",
     "http://chat.ins.cx:8000",
     "http://chat.ins.cx:5173",
+    "https://chat-be.ins.cx",
+    "http://chat-be.ins.cx",
 ]
 
 app.add_middleware(
