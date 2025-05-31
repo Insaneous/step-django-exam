@@ -11,6 +11,7 @@ origins = [
     "http://localhost:5173",
     "http://localhost:8000",
     "https://chat.ins.cx",
+    "http://chat.ins.cx",
     "https://chat.ins.cx:8000",
     "https://chat.ins.cx:5173",
     "https://chat.ins.cx:3000",
